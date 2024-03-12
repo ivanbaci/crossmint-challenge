@@ -2,12 +2,25 @@ import axios from 'axios';
 import 'dotenv/config';
 import { Map } from './types/map.type';
 
-export const fetchGoalMap = async (): Promise<Map> => {
+const fetchGoalMap = async (): Promise<string[][]> => {
   const goalMapUrl = `${process.env.BASE_API_URL}/map/${process.env.CANDIDATE_ID}/goal`;
 
   const response = await axios.get(goalMapUrl);
   console.log(response.data);
-  return response.data;
+  return response.data.goal;
 };
 
-fetchGoalMap();
+const parseMap = (map: string[][]): void => {
+  map.forEach((row, rowIndex) => {
+    row.forEach((cell, cellIndex) => {
+      console.log(`Row ${rowIndex}, Cell ${cellIndex}: ${cell}`);
+    });
+  });
+};
+
+const main = async () => {
+  const goalMap = await fetchGoalMap();
+  parseMap(goalMap);
+};
+
+main();
