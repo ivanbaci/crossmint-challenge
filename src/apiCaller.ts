@@ -13,7 +13,7 @@ export class ApiCaller {
         if (axios.isAxiosError(error) && error.response) {
           const status: number = error.response.status;
           const message: string = error.response.data?.message || 'No message';
-          if (status === 429 || (status >= 500 && status <= 599)) {
+          if (status >= 500 && status <= 599) {
             // TODO: handle other errors
             console.error(`Attempt ${attempt} - Error ${status}: ${message}`);
             if (attempt < this.retries) {
@@ -22,6 +22,8 @@ export class ApiCaller {
               await new Promise(resolve => setTimeout(resolve, waitTime));
               continue;
             }
+          } else {
+            throw error;
           }
         }
         break;
