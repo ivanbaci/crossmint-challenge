@@ -50,7 +50,7 @@ export class ConcurrentApiCaller {
         continue;
       }
 
-      const call = this.queue.shift()!; // Extrae la primera llamada de la cola
+      const call = this.queue.shift()!;
       this.activeCalls++;
       console.log(`New call entry. Active calls: ${this.activeCalls}`);
 
