@@ -16,9 +16,9 @@ export class CrossmintApiClient {
   public async createPolyanet(pos: { x: number; y: number }): Promise<void> {
     await this.apiCaller.callWithRetries(() =>
       axios.post(`${this.baseUrl}/polyanets`, {
+        candidateId: this.candidateId,
         column: pos.x,
-        row: pos.y,
-        candidateId: this.candidateId
+        row: pos.y
       })
     );
   }
@@ -29,10 +29,24 @@ export class CrossmintApiClient {
   ): Promise<void> {
     await this.apiCaller.callWithRetries(() =>
       axios.post(`${this.baseUrl}/soloons`, {
+        candidateId: this.candidateId,
         column: pos.x,
         row: pos.y,
-        candidateId: this.candidateId,
         color
+      })
+    );
+  }
+
+  public async createCometh(
+    pos: { x: number; y: number },
+    direction: string
+  ): Promise<void> {
+    await this.apiCaller.callWithRetries(() =>
+      axios.post(`${this.baseUrl}/comeths`, {
+        candidateId: this.candidateId,
+        column: pos.x,
+        row: pos.y,
+        direction
       })
     );
   }
