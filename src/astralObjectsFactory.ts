@@ -1,6 +1,5 @@
-import { ApiCaller } from './apiCaller';
-import { ConcurrentApiCaller } from './concurrentApiCaller';
 import { CrossmintApiClient } from './crossmintApiClient';
+import { ConcurrentApiCaller } from './concurrentApiCaller';
 import { AstralObject, Cell } from './types/map.type';
 
 export class AstralObjectsFactory {
@@ -11,34 +10,25 @@ export class AstralObjectsFactory {
   }
 
   public async createAstralsObjects(cells: Cell[]): Promise<void> {
-    const calls = cells.flatMap(cell => {
-      switch (cell.object) {
-        case AstralObject.POLYANET:
-          return [() => this.apiClient.createPolyanet(cell.position)];
-        case AstralObject.SOLOON:
-          if (cell.color) {
-            return [
-              () =>
-                this.apiClient.createSoloon(cell.position, cell.color as string)
-            ];
-          }
-          return [];
-        case AstralObject.COMETH:
-          if (cell.direction) {
-            return [
-              () =>
-                this.apiClient.createCometh(
-                  cell.position,
-                  cell.direction as string
-                )
-            ];
-          }
-          return [];
-        default:
-          return [];
-      }
-    });
-
+    const calls = cells.flatMap(cell => this.createCallForCell(cell));
     await this.concurrentApiCaller.makeConcurrentCalls(calls);
+  }
+
+  private createCallForCell(cell: Cell): Array<() => Promise<any>> {
+    const actionMap: Record<AstralObject, (() => Promise<any>) | null> = {
+      [AstralObject.SPACE]: null,
+      [AstralObject.POLYANET]: () =>
+        this.apiClient.createPolyanet(cell.position),
+      [AstralObject.SOLOON]: cell.color
+        ? () => this.apiClient.createSoloon(cell.position, cell.color as string)
+        : null,
+      [AstralObject.COMETH]: cell.direction
+        ? () =>
+            this.apiClient.createCometh(cell.position, cell.direction as string)
+        : null
+    };
+
+    const action = actionMap[cell.object] ?? null;
+    return action ? [action] : [];
   }
 }
