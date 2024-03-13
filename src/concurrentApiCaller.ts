@@ -20,6 +20,21 @@ export class ConcurrentApiCaller {
     this.activeCalls = 0;
   }
 
+  async makeConcurrentCalls(calls: Array<() => Promise<any>>): Promise<void> {
+    for (const call of calls) {
+      this.addCall(call);
+    }
+
+    while (this.activeCalls > 0 || this.queue.length > 0) {
+      await this.delay(100);
+    }
+  }
+
+  public addCall(call: () => Promise<any>) {
+    this.queue.push(call);
+    this.processQueue();
+  }
+
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -64,22 +79,6 @@ export class ConcurrentApiCaller {
       }
     }
   }
-
-  public addCall(call: () => Promise<any>) {
-    this.queue.push(call);
-    this.processQueue();
-  }
-
-  async makeConcurrentCalls(calls: Array<() => Promise<any>>): Promise<void> {
-    for (const call of calls) {
-      this.addCall(call);
-    }
-
-    while (this.activeCalls > 0 || this.queue.length > 0) {
-      await this.delay(100);
-    }
-  }
-
   private adjustConcurrency(success: boolean) {
     console.log(`Adjusting concurrency. Success: ${success}`);
     if (success) {
