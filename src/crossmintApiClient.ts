@@ -13,21 +13,26 @@ export class CrossmintApiClient {
     return response.data.goal;
   }
 
-  public async createPolyanet(pos: { x: number; y: number }): Promise<void> {
-    await this.apiCaller.callWithRetries(() =>
+  public async createPolyanet(pos: { x: number; y: number }): Promise<any> {
+    console.log('Creating Polyanet at', pos);
+    const response: AxiosResponse = await this.apiCaller.callWithRetries(() =>
       axios.post(`${this.baseUrl}/polyanets`, {
         candidateId: this.candidateId,
         column: pos.x,
         row: pos.y
       })
     );
+
+    if (response.status === 200)
+      console.log(`Polyanet created at ${pos.x}, ${pos.y}`);
   }
 
   public async createSoloon(
     pos: { x: number; y: number },
     color: string
-  ): Promise<void> {
-    await this.apiCaller.callWithRetries(() =>
+  ): Promise<any> {
+    console.log('Creating SOLoon at', pos, 'with color', color);
+    const response: AxiosResponse = await this.apiCaller.callWithRetries(() =>
       axios.post(`${this.baseUrl}/soloons`, {
         candidateId: this.candidateId,
         column: pos.x,
@@ -35,13 +40,17 @@ export class CrossmintApiClient {
         color
       })
     );
+
+    if (response.status === 200)
+      console.log(`SOLoon created at ${pos.x}, ${pos.y} with color ${color}`);
   }
 
   public async createCometh(
     pos: { x: number; y: number },
     direction: string
-  ): Promise<void> {
-    await this.apiCaller.callWithRetries(() =>
+  ): Promise<any> {
+    console.log('Creating comETH at', pos, 'with direction', direction);
+    const response: AxiosResponse = await this.apiCaller.callWithRetries(() =>
       axios.post(`${this.baseUrl}/comeths`, {
         candidateId: this.candidateId,
         column: pos.x,
@@ -49,5 +58,10 @@ export class CrossmintApiClient {
         direction
       })
     );
+
+    if (response.status === 200)
+      console.log(
+        `comETH created at ${pos.x}, ${pos.y} with direction ${direction}`
+      );
   }
 }
