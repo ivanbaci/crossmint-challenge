@@ -6,6 +6,7 @@ export class ConcurrentApiCaller {
   private activeCalls: number;
   private successfulConsecutiveCalls: number = 0;
   private failedAttempts: number = 0;
+  private isHandlingRateLimit: boolean = false;
 
   constructor(
     private maxConcurrency: number = 5,
@@ -44,6 +45,11 @@ export class ConcurrentApiCaller {
       this.queue.length > 0 &&
       this.activeCalls < this.currentConcurrency
     ) {
+      if (this.isHandlingRateLimit) {
+        await this.delay(this.baseDelay);
+        continue;
+      }
+
       const call = this.queue.shift()!; // Extrae la primera llamada de la cola
       this.activeCalls++;
       console.log(`New call entry. Active calls: ${this.activeCalls}`);
@@ -74,15 +80,19 @@ export class ConcurrentApiCaller {
 
   private async handleErrorOnCall(error: any, call: () => Promise<any>) {
     if (axios.isAxiosError(error) && error.response?.status === 429) {
-      this.successfulConsecutiveCalls = 0;
-      this.failedAttempts++;
-      const backoffDelay = this.calculateExponentialBackoff(
-        this.failedAttempts
-      );
-      console.log(`Rate limit exceeded. Retrying in ${backoffDelay}ms...`);
-      await this.delay(backoffDelay);
+      if (!this.isHandlingRateLimit) {
+        this.isHandlingRateLimit = true;
+        this.successfulConsecutiveCalls = 0;
+        this.failedAttempts++;
+        const backoffDelay = this.calculateExponentialBackoff(
+          this.failedAttempts
+        );
+        console.log(`Rate limit exceeded. Retrying in ${backoffDelay}ms...`);
+        await this.delay(backoffDelay);
+        this.adjustConcurrency(false);
+        this.isHandlingRateLimit = false;
+      }
       this.queue.unshift(call);
-      this.adjustConcurrency(false);
     } else {
       console.error('Error calling API:', error);
     }
