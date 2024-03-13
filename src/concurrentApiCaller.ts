@@ -11,7 +11,9 @@ export class ConcurrentApiCaller {
     private maxConcurrency: number = 5,
     private increaseRate: number = 1,
     private decreaseRate: number = 1,
-    private initialConcurrency: number = 2
+    private initialConcurrency: number = 2,
+    private baseDelay: number = 1000,
+    private maxDelay: number = 30000
   ) {
     this.currentConcurrency = initialConcurrency;
     this.queue = [];
@@ -81,24 +83,27 @@ export class ConcurrentApiCaller {
   private adjustConcurrency(success: boolean) {
     console.log(`Adjusting concurrency. Success: ${success}`);
     if (success) {
-      if (this.currentConcurrency < this.maxConcurrency) {
-        this.currentConcurrency += this.increaseRate;
-      }
+      this.currentConcurrency = Math.min(
+        this.currentConcurrency + this.increaseRate,
+        this.maxConcurrency
+      );
     } else {
-      this.currentConcurrency =
-        this.initialConcurrency < this.activeCalls - this.decreaseRate
-          ? this.initialConcurrency
-          : this.activeCalls - this.decreaseRate;
-      console.log(`Current concurrency updated: ${this.currentConcurrency}`);
+      this.currentConcurrency = Math.min(
+        this.initialConcurrency,
+        this.activeCalls - this.decreaseRate
+      );
       if (this.currentConcurrency < 1) {
         this.currentConcurrency = 1;
       }
     }
+    console.log(`Current concurrency updated: ${this.currentConcurrency}`);
   }
 
   private calculateExponentialBackoff(failedAttempts: number): number {
     console.log(`Calculating backoff for failed attempt ${failedAttempts}`);
-    const baseDelay = 1000;
-    return Math.min(baseDelay * Math.pow(2, failedAttempts), 30000);
+    return Math.min(
+      this.baseDelay * Math.pow(2, failedAttempts),
+      this.maxDelay
+    );
   }
 }
