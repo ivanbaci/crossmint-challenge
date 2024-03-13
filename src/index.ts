@@ -11,7 +11,7 @@ const main = async () => {
 
   console.log('Creating astral objects...');
   const astralObjectsFactory = new AstralObjectsFactory(apiClient);
-  await astralObjectsFactory.createAstralsObjects(cells);
+  await astralObjectsFactory.createAstralObjects(cells);
 };
 
 main();

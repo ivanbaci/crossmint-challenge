@@ -9,7 +9,7 @@ export class AstralObjectsFactory {
     this.concurrentApiCaller = new ConcurrentApiCaller();
   }
 
-  public async createAstralsObjects(cells: Cell[]): Promise<void> {
+  public async createAstralObjects(cells: Cell[]): Promise<void> {
     const calls = cells.flatMap(cell => this.createCallForCell(cell));
     await this.concurrentApiCaller.makeConcurrentCalls(calls);
   }
