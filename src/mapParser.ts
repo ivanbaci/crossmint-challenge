@@ -1,3 +1,4 @@
+import { SOLoonColors, comETHDirections } from './constants';
 import { AstralObject, Cell } from './types/map.type';
 
 export class MapParser {
@@ -31,10 +32,16 @@ export class MapParser {
   }
 
   private getColor(prefix: string): string {
-    return prefix;
+    if (!SOLoonColors.includes(prefix.toUpperCase())) {
+      throw new Error(`Unknown SOLoon color: ${prefix}`);
+    }
+    return prefix.toLowerCase();
   }
 
   private getDirection(prefix: string): string {
-    return prefix;
+    if (!comETHDirections.includes(prefix.toUpperCase())) {
+      throw new Error(`Unknown comETH direction: ${prefix}`);
+    }
+    return prefix.toLowerCase();
   }
 }
