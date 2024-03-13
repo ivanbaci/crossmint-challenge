@@ -9,7 +9,12 @@ export class MapParser {
   }
 
   private createCell(rawCell: string, x: number, y: number): Cell {
-    const [prefix, object] = rawCell.split('_');
+    let prefix, object;
+    if (rawCell.includes('_')) {
+      [prefix, object] = rawCell.split('_');
+    } else {
+      object = rawCell;
+    }
 
     if (object && !(object in AstralObject)) {
       throw new Error(`Unknown AstralObject on goal map: ${object}`);
@@ -22,12 +27,14 @@ export class MapParser {
     return {
       object: cellObject,
       position: { x, y },
-      ...(cellObject === AstralObject.SOLOON && {
-        color: this.getColor(prefix)
-      }),
-      ...(cellObject === AstralObject.COMETH && {
-        direction: this.getDirection(prefix)
-      })
+      ...(cellObject === AstralObject.SOLOON &&
+        prefix && {
+          color: this.getColor(prefix)
+        }),
+      ...(cellObject === AstralObject.COMETH &&
+        prefix && {
+          direction: this.getDirection(prefix)
+        })
     };
   }
 
