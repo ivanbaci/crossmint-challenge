@@ -1,12 +1,16 @@
-export enum Cell {
+export enum AstralObject {
   SPACE = 'SPACE',
-  POLYANET = 'POLYANET'
+  POLYANET = 'POLYANET',
+  SOLOON = 'SOLOON',
+  COMETH = 'COMETH'
 }
 
-export type Row = {
-  cells: Cell[];
-};
-
-export type Map = {
-  rows: Row[];
+export type Cell = {
+  object: AstralObject;
+  position: {
+    x: number;
+    y: number;
+  };
+  color?: string;
+  direction?: string;
 };
