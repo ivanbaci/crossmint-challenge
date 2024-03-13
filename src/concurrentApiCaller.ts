@@ -44,39 +44,47 @@ export class ConcurrentApiCaller {
       this.queue.length > 0 &&
       this.activeCalls < this.currentConcurrency
     ) {
-      const call = this.queue.shift()!;
+      const call = this.queue.shift()!; // Extrae la primera llamada de la cola
       this.activeCalls++;
       console.log(`New call entry. Active calls: ${this.activeCalls}`);
+
       try {
         await call();
-        this.successfulConsecutiveCalls++;
-        console.log(
-          `Call successful. Consecutive calls: ${this.successfulConsecutiveCalls}`
-        );
-        if (this.successfulConsecutiveCalls % this.initialConcurrency === 0) {
-          this.failedAttempts = 0;
-          this.adjustConcurrency(true);
-        }
+        this.handleSuccessfulCall();
       } catch (error) {
-        if (
-          axios.isAxiosError(error) &&
-          error.response &&
-          error.response.status === 429
-        ) {
-          this.successfulConsecutiveCalls = 0;
-          this.adjustConcurrency(false);
-          this.failedAttempts++;
-          const backoffDelay = this.calculateExponentialBackoff(
-            this.failedAttempts
-          );
-          console.log(`Rate limit exceeded. Retrying in ${backoffDelay}ms...`);
-          await this.delay(backoffDelay);
-          this.queue.unshift(call);
-        } else console.error('Error calling API:', error);
+        this.handleErrorOnCall(error, call);
       } finally {
         this.activeCalls--;
         this.processQueue();
       }
+    }
+  }
+
+  private handleSuccessfulCall() {
+    this.successfulConsecutiveCalls++;
+    console.log(
+      `Call successful. Consecutive calls: ${this.successfulConsecutiveCalls}`
+    );
+
+    if (this.successfulConsecutiveCalls % this.initialConcurrency === 0) {
+      this.failedAttempts = 0;
+      this.adjustConcurrency(true);
+    }
+  }
+
+  private async handleErrorOnCall(error: any, call: () => Promise<any>) {
+    if (axios.isAxiosError(error) && error.response?.status === 429) {
+      this.successfulConsecutiveCalls = 0;
+      this.failedAttempts++;
+      const backoffDelay = this.calculateExponentialBackoff(
+        this.failedAttempts
+      );
+      console.log(`Rate limit exceeded. Retrying in ${backoffDelay}ms...`);
+      await this.delay(backoffDelay);
+      this.queue.unshift(call);
+      this.adjustConcurrency(false);
+    } else {
+      console.error('Error calling API:', error);
     }
   }
 
