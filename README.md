@@ -38,19 +38,13 @@ npm run start
 
 ### Run tests
 
-The tests are unit tests. It would be nice to include some e2e tests also.
+The tests are some unit tests. There are two classes with missing tests that should be tested also. It would be nice to include some e2e tests also.
 
 ```
 npm test
 ```
 
 ### Solution
-
-#### Why Node.js
-
-- **Familiarity and simplicity**: my existing proficiency with Node.js and its associated tools significantly influenced the decision. This familiarity allowed for quicker development and debugging.
-- **Rich ecosystem**: Node.js has a vast ecosystem with numerous libraries and tools, making it easier to find and use packages like axios for HTTP requests and dotenv for environment variable management.
-- **Asynchronous nature**: Node.js's non-blocking I/O model is well-suited for handling multiple I/O operations, such as API requests, efficiently.
 
 #### Key points
 
