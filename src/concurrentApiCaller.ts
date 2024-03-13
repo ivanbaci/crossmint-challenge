@@ -4,7 +4,7 @@ export class ConcurrentApiCaller {
   private currentConcurrency: number;
   private queue: Array<() => Promise<any>>;
   private activeCalls: number;
-  private sucessfulConsecutiveCalls: number = 0;
+  private successfulConsecutiveCalls: number = 0;
   private failedAttempts: number = 0;
 
   constructor(
@@ -49,11 +49,11 @@ export class ConcurrentApiCaller {
       console.log(`New call entry. Active calls: ${this.activeCalls}`);
       try {
         await call();
-        this.sucessfulConsecutiveCalls++;
+        this.successfulConsecutiveCalls++;
         console.log(
-          `Call successful. Consecutive calls: ${this.sucessfulConsecutiveCalls}`
+          `Call successful. Consecutive calls: ${this.successfulConsecutiveCalls}`
         );
-        if (this.sucessfulConsecutiveCalls % this.initialConcurrency === 0) {
+        if (this.successfulConsecutiveCalls % this.initialConcurrency === 0) {
           this.failedAttempts = 0;
           this.adjustConcurrency(true);
         }
@@ -63,7 +63,7 @@ export class ConcurrentApiCaller {
           error.response &&
           error.response.status === 429
         ) {
-          this.sucessfulConsecutiveCalls = 0;
+          this.successfulConsecutiveCalls = 0;
           this.adjustConcurrency(false);
           this.failedAttempts++;
           const backoffDelay = this.calculateExponentialBackoff(
@@ -79,6 +79,7 @@ export class ConcurrentApiCaller {
       }
     }
   }
+
   private adjustConcurrency(success: boolean) {
     console.log(`Adjusting concurrency. Success: ${success}`);
     if (success) {
