@@ -22,4 +22,18 @@ export class CrossmintApiClient {
       })
     );
   }
+
+  public async createSoloon(
+    pos: { x: number; y: number },
+    color: string
+  ): Promise<void> {
+    await this.apiCaller.callWithRetries(() =>
+      axios.post(`${this.baseUrl}/soloons`, {
+        column: pos.x,
+        row: pos.y,
+        candidateId: this.candidateId,
+        color
+      })
+    );
+  }
 }
