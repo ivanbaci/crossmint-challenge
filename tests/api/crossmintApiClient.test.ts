@@ -1,6 +1,6 @@
 import axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
-import { CrossmintApiClient } from '../src/crossmintApiClient';
+import { CrossmintApiClient } from '../../src/api/crossmintApiClient';
 
 describe('CrossmintApiClient', () => {
   const mockAxios = new AxiosMockAdapter(axios);

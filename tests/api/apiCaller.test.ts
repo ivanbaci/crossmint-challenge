@@ -1,6 +1,6 @@
 import axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
-import { ApiCaller } from '../src/apiCaller';
+import { ApiCaller } from '../../src/api/apiCaller';
 
 describe('ApiCaller', () => {
   const mockAxios = new AxiosMockAdapter(axios);

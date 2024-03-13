@@ -1,7 +1,7 @@
 import 'dotenv/config';
-import { CrossmintApiClient } from './crossmintApiClient';
-import { MapParser } from './mapParser';
-import { AstralObjectsFactory } from './astralObjectsFactory';
+import { CrossmintApiClient } from './api/crossmintApiClient';
+import { MapParser } from './parsers/mapParser';
+import { AstralObjectsFactory } from './factories/astralObjectsFactory';
 
 const main = async () => {
   const apiClient = new CrossmintApiClient();

@@ -1,5 +1,5 @@
-import { SOLoonColors, comETHDirections } from './constants';
-import { AstralObject, Cell } from './types/map.type';
+import { SOLoonColors, comETHDirections } from '../constants/constants';
+import { AstralObject, Cell } from '../types/map.type';
 
 export class MapParser {
   public parseMap(rawMap: string[][]): Cell[] {

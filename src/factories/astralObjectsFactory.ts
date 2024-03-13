@@ -1,6 +1,6 @@
-import { CrossmintApiClient } from './crossmintApiClient';
-import { ConcurrentApiCaller } from './concurrentApiCaller';
-import { AstralObject, Cell } from './types/map.type';
+import { CrossmintApiClient } from '../api/crossmintApiClient';
+import { ConcurrentApiCaller } from '../api/concurrentApiCaller';
+import { AstralObject, Cell } from '../types/map.type';
 
 export class AstralObjectsFactory {
   private concurrentApiCaller: ConcurrentApiCaller;
